@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 USER = get_user_model()
 
 # Длина текста.
-text_len = 256
+TEXT_LEN = 256
 
 
 class BaseModel(models.Model):
@@ -18,18 +18,12 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['-pub_date']
+        ordering = (['-pub_date'])
 
 
-class TitleModel(models.Model):
-    title = models.CharField(max_length=text_len,
+class Post(BaseModel):
+    title = models.CharField(max_length=TEXT_LEN,
                              verbose_name='Заголовок')
-
-    class Meta:
-        abstract = True
-
-
-class Post(BaseModel, TitleModel):
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
@@ -44,12 +38,14 @@ class Post(BaseModel, TitleModel):
                                  blank=False, null=True,
                                  verbose_name='Местоположение')
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
 
 
-class Category(BaseModel, TitleModel):
+class Category(BaseModel):
+    title = models.CharField(max_length=TEXT_LEN,
+                             verbose_name='Заголовок')
     description = models.TextField(verbose_name='Описание')
     slug = models.SlugField(
         unique=True, verbose_name='Идентификатор',
@@ -66,7 +62,7 @@ class Category(BaseModel, TitleModel):
 
 
 class Location(BaseModel):
-    name = models.CharField(max_length=text_len, verbose_name='Название места')
+    name = models.CharField(max_length=TEXT_LEN, verbose_name='Название места')
 
     class Meta:
         verbose_name = 'местоположение'
